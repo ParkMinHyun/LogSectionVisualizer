@@ -1,0 +1,29 @@
+﻿{
+  "filters": [
+    {
+      "name": "openCamera",
+      "start": "[CAMFWKPI] OpenCamera E",
+      "end": "[CAMFWKPI] OpenCamera X"
+    },
+    {
+      "name": "createCaptureSession",
+      "start": "[CAMFWKPI] createCaptureSession E",
+      "end": "[CAMFWKPI] createCaptureSession X"
+    },
+    {
+      "name": "initializeMaker",
+      "start": "initializeProcessingPhotoMaker E",
+      "end": "initializeMaker X"
+    },
+    {
+      "name": "firstPreviewFrame",
+      "start": "[CAMFWKPI] startPreviewRepeating",
+      "end": "[CAMFWKPI] first producePreviewFrame E"
+    },
+    {
+      "name": "total",
+      "start": "[CAMFWKPI] openCamDevice E",
+      "end": "[CAMFWKPI] first producePreviewFrame X"
+    }
+  ]
+}
