@@ -6,8 +6,6 @@ using LogVisualizer.data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using static LogVisualizer.JsonData;
@@ -17,15 +15,14 @@ using LogVisualizer.util;
 
 namespace LogVisualizer {
 
-    public partial class MainWindow : Window {
-
-        private static string JSON_FORMAT_FILE_NAME = "JsonFormat.txt";
-        private static string DEFAULT_JSON_FORMAT_FILE_NAME = @"sample.json";
+    public partial class MainWindow : Window, ILogAnalizerCallback {
 
         private AnalysisData analysisData;
+        private LogAnalizer logAnalizer;
         private BackgroundWorker worker;
 
         private string? logText;
+
         private int maxAxisYValue = 1000;
 
         public MainWindow() {
@@ -59,6 +56,8 @@ namespace LogVisualizer {
         }
 
         private void InitBackgroundWorker() {
+            logAnalizer = new LogAnalizer(this);
+
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.WorkerSupportsCancellation = true;
@@ -68,7 +67,7 @@ namespace LogVisualizer {
 
         void DoBackgroundWorker(object sender, DoWorkEventArgs e) {
             foreach (string logFile in e.Argument as string[]) {
-                showLogFile(logFile);
+                logAnalizer.Analyze(logFile, analysisData.filters);
             }
         }
 
@@ -81,10 +80,10 @@ namespace LogVisualizer {
                 return;
             }
 
-            showLogFiles(e.Data.GetData(DataFormats.FileDrop) as string[]);
+            AnalyzeLogFiles(e.Data.GetData(DataFormats.FileDrop) as string[]);
         }
 
-        private void showLogFiles(string[]? logFileNames) {
+        private void AnalyzeLogFiles(string[]? logFileNames) {
             int totalNum = logFileNames.Length + SeriesCollection.Count;
             if (totalNum > 4) {
                 MessageBox.Show("You can load log up to 4 files.", "Load Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -93,62 +92,6 @@ namespace LogVisualizer {
 
             BusyIndicator.IsBusy = true;
             worker.RunWorkerAsync(logFileNames);
-        }
-
-        private void showLogFile(string logFile) {
-            FileStream fileStream = new FileStream(logFile, FileMode.Open, FileAccess.Read);
-
-            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8)) {
-                string line;
-                int validCount = 0;
-
-                Dictionary<string, LogData> logDictionary = new Dictionary<string, LogData>();
-
-                while ((line = streamReader.ReadLine()) != null) {
-                    foreach (var data in analysisData.filters) {
-                        // Todo : %d%d-%d%d regex 일 경우에만 수행
-                        if (line.Contains(data.start) && !logDictionary.ContainsKey(data.name)) {
-                            logDictionary.Add(data.name, new LogData(line));
-                        } else if (line.Contains(data.end) && logDictionary.ContainsKey(data.name)) {
-                            Labels[validCount++] = data.name;
-                            logDictionary[data.name].endLog = line;
-                            logDictionary[data.name].calculateInterval();
-
-                            int interval = (int)logDictionary[data.name].interval;
-                            if (maxAxisYValue < interval) {
-                                maxAxisYValue = interval;
-                                this.Dispatcher.Invoke(() => { AxisY.MaxValue = interval; });
-                            }
-                        }
-                    }
-
-                    if (validCount == analysisData.filters.Count) {
-                        this.Dispatcher.Invoke(() => { drawChart(logFile, logDictionary); });
-                        return;
-                    }
-                }
-            }
-        }
-
-        private void drawChart(string logFile, Dictionary<string, LogData> logDictionary) {
-            var values = new List<double>();
-
-            ClearLogPanel.Visibility = Visibility.Visible;
-            ExtractLogPanel.Visibility = Visibility.Visible;
-
-            logText += GetFileName(logFile) + "\n";
-            foreach (var data in analysisData.filters) {
-                logText += "[ " + data.name + " - " + logDictionary[data.name].interval + "ms ]\n";
-                logText += logDictionary[data.name].startLog + "\n";
-                logText += logDictionary[data.name].endLog + "\n\n";
-                values.Add(logDictionary[data.name].interval);
-            }
-
-            SeriesCollection.Add(new ColumnSeries {
-                Title = GetFileName(logFile),
-                Values = new ChartValues<double>(values),
-                Fill = ChartColor.colorList[SeriesCollection.Count]
-            });
         }
 
         private static string GetFileName(string fileName) {
@@ -188,8 +131,42 @@ namespace LogVisualizer {
             openFileDialog.RestoreDirectory = true;
 
             if (openFileDialog.ShowDialog() == true) {
-                showLogFiles(openFileDialog.FileNames);
+                AnalyzeLogFiles(openFileDialog.FileNames);
             }
+        }
+
+        public void OnFilteredLogSection(string sectionName, int sectionCount, int interval) {
+            Labels[sectionCount] = sectionName;
+
+            if (maxAxisYValue < interval) {
+                maxAxisYValue = interval;
+                this.Dispatcher.Invoke(() => { AxisY.MaxValue = interval; });
+            }
+        }
+
+        public void OnCompletedLogAnalysis(string logFile, Dictionary<string, LogData> logDictionary) {
+            var values = new List<double>();
+
+            logText += GetFileName(logFile) + "\n";
+            foreach (var data in analysisData.filters) {
+                logText += "[ " + data.name + " - " + logDictionary[data.name].interval + "ms ]\n";
+                logText += logDictionary[data.name].startLog + "\n";
+                logText += logDictionary[data.name].endLog + "\n\n";
+                values.Add(logDictionary[data.name].interval);
+            }
+
+            this.Dispatcher.Invoke(() => { drawChart(logFile, values); });
+        }
+
+        private void drawChart(string logFile, List<double> logValues) {
+            ClearLogPanel.Visibility = Visibility.Visible;
+            ExtractLogPanel.Visibility = Visibility.Visible;
+
+            SeriesCollection.Add(new ColumnSeries {
+                Title = GetFileName(logFile),
+                Values = new ChartValues<double>(logValues),
+                Fill = ChartColor.colorList[SeriesCollection.Count]
+            });
         }
 
         private void DragOverView(object sender, DragEventArgs e) {
