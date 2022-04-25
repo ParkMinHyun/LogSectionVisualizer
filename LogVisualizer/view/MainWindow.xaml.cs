@@ -19,7 +19,7 @@ namespace LogVisualizer {
     public partial class MainWindow : Window, ILogAnalizerCallback {
 
         private AnalysisData analysisData;
-        private List<string> logFiles = new List<string>();
+        private List<string> analysislogFiles;
 
         private LogAnalizer logAnalizer;
         private BackgroundWorker worker;
@@ -33,7 +33,7 @@ namespace LogVisualizer {
 
             LoadJson();
             InitView();
-            InitBackgroundWorker();
+            InitLogAnalsisData();
 
             DataContext = this;
         }
@@ -50,7 +50,7 @@ namespace LogVisualizer {
         }
 
         private void InitView() {
-            SeriesCollection = new SeriesCollection {};
+            SeriesCollection = new SeriesCollection { };
 
             Labels = new string[analysisData.filters.Count];
             Formatter = value => value.ToString("n");
@@ -58,8 +58,9 @@ namespace LogVisualizer {
             MouseDown += Window_MouseDown;
         }
 
-        private void InitBackgroundWorker() {
+        private void InitLogAnalsisData() {
             logAnalizer = new LogAnalizer(this);
+            analysislogFiles = new List<string>();
 
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
@@ -85,19 +86,17 @@ namespace LogVisualizer {
 
             string[] droppedLogFiles = e.Data.GetData(DataFormats.FileDrop) as string[];
 
-            foreach (string logFile in droppedLogFiles) {
-                logFiles.Add(logFile);
-            }
-
             AnalyzeLogFiles(droppedLogFiles.ToList());
         }
 
         private void AnalyzeLogFiles(List<string>? logFileNames) {
-            int totalNum = logFileNames.Count + SeriesCollection.Count;
-            if (totalNum > 4) {
+            int currentLogFileCount = logFileNames.Count + SeriesCollection.Count;
+            if (currentLogFileCount > 4) {
                 MessageBox.Show("You can load log up to 4 files.", "Load Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+
+            analysislogFiles.AddRange(logFileNames);
 
             BusyIndicator.IsBusy = true;
             worker.RunWorkerAsync(logFileNames);
@@ -111,7 +110,7 @@ namespace LogVisualizer {
             Labels = new string[analysisData.filters.Count];
 
             BusyIndicator.IsBusy = true;
-            worker.RunWorkerAsync(logFiles);
+            worker.RunWorkerAsync(analysislogFiles);
         }
 
         private void ClearLogFiles(object sender, RoutedEventArgs e) {
@@ -120,6 +119,7 @@ namespace LogVisualizer {
             ClearLogPanel.Visibility = Visibility.Collapsed;
             ExtractLogPanel.Visibility = Visibility.Collapsed;
 
+            analysislogFiles.Clear();
             SeriesCollection.Clear();
         }
 
@@ -129,7 +129,7 @@ namespace LogVisualizer {
 
         private void ChangeJsonFilter(object sender, RoutedEventArgs e) {
             this.Effect = new BlurEffect();
-            JsonFilterDialog jsonFilterDialog= new JsonFilterDialog(sender as DependencyObject);
+            JsonFilterDialog jsonFilterDialog = new JsonFilterDialog(sender as DependencyObject);
             jsonFilterDialog.ShowDialog();
         }
 
@@ -141,13 +141,9 @@ namespace LogVisualizer {
             openFileDialog.RestoreDirectory = true;
 
             if (openFileDialog.ShowDialog() == true) {
-                string[] openLogFiles = openFileDialog.FileNames;
+                List<string> openLogFiles = openFileDialog.FileNames.ToList();
 
-                foreach (string logFile in openLogFiles) {
-                    logFiles.Add(logFile);
-                }
-
-                AnalyzeLogFiles(openLogFiles.ToList());
+                AnalyzeLogFiles(openLogFiles);
             }
         }
 
@@ -161,33 +157,36 @@ namespace LogVisualizer {
         }
 
         public void OnCompletedLogAnalysis(string logFile, Dictionary<string, LogData> logDictionary) {
-            var values = new List<double>();
+            var logSectionIntervals = new List<double>();
 
             logText += GetFileName(logFile) + "\n";
             foreach (var data in analysisData.filters) {
-                logText += "[ " + data.name + " - " + logDictionary[data.name].interval + "ms ]\n";
-                logText += logDictionary[data.name].startLog + "\n";
-                logText += logDictionary[data.name].endLog + "\n\n";
-                values.Add(logDictionary[data.name].interval);
+                var logSection = logDictionary[data.name];
+
+                logText += "[ " + data.name + " - " + logSection.interval + "ms ]\n";
+                logText += logSection.startLog + "\n";
+                logText += logSection.endLog + "\n\n";
+                logSectionIntervals.Add(logSection.interval);
             }
 
-            this.Dispatcher.Invoke(() => { drawChart(logFile, values); });
+            drawChart(logFile, logSectionIntervals);
         }
 
-        private void drawChart(string logFile, List<double> logValues) {
-            ClearLogPanel.Visibility = Visibility.Visible;
-            ExtractLogPanel.Visibility = Visibility.Visible;
+        private void drawChart(string logFile, List<double> logSectionIntervals) {
+            this.Dispatcher.Invoke(() => {
+                ClearLogPanel.Visibility = Visibility.Visible;
+                ExtractLogPanel.Visibility = Visibility.Visible;
 
-            SeriesCollection.Add(new ColumnSeries {
-                Title = GetFileName(logFile),
-                Values = new ChartValues<double>(logValues),
-                Fill = ChartColor.colorList[SeriesCollection.Count]
+                SeriesCollection.Add(new ColumnSeries {
+                    Title = GetFileName(logFile),
+                    Values = new ChartValues<double>(logSectionIntervals),
+                    Fill = ChartColor.colorList[SeriesCollection.Count]
+                });
             });
         }
 
         private static string GetFileName(string fileName) {
-            string[] filePath = fileName.Split('\\');
-            return filePath[^1];
+            return fileName.Split('\\')[^1];
         }
 
         private void DragOverView(object sender, DragEventArgs e) {
