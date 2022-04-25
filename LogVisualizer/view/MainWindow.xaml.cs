@@ -12,12 +12,15 @@ using static LogVisualizer.JsonData;
 using LogVisualizer.view;
 using System.Windows.Media.Effects;
 using LogVisualizer.util;
+using System.Linq;
 
 namespace LogVisualizer {
 
     public partial class MainWindow : Window, ILogAnalizerCallback {
 
         private AnalysisData analysisData;
+        private List<string> logFiles = new List<string>();
+
         private LogAnalizer logAnalizer;
         private BackgroundWorker worker;
 
@@ -66,7 +69,7 @@ namespace LogVisualizer {
         }
 
         void DoBackgroundWorker(object sender, DoWorkEventArgs e) {
-            foreach (string logFile in e.Argument as string[]) {
+            foreach (string logFile in e.Argument as List<string>) {
                 logAnalizer.Analyze(logFile, analysisData.filters);
             }
         }
@@ -80,11 +83,17 @@ namespace LogVisualizer {
                 return;
             }
 
-            AnalyzeLogFiles(e.Data.GetData(DataFormats.FileDrop) as string[]);
+            string[] droppedLogFiles = e.Data.GetData(DataFormats.FileDrop) as string[];
+
+            foreach (string logFile in droppedLogFiles) {
+                logFiles.Add(logFile);
+            }
+
+            AnalyzeLogFiles(droppedLogFiles.ToList());
         }
 
-        private void AnalyzeLogFiles(string[]? logFileNames) {
-            int totalNum = logFileNames.Length + SeriesCollection.Count;
+        private void AnalyzeLogFiles(List<string>? logFileNames) {
+            int totalNum = logFileNames.Count + SeriesCollection.Count;
             if (totalNum > 4) {
                 MessageBox.Show("You can load log up to 4 files.", "Load Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -94,14 +103,15 @@ namespace LogVisualizer {
             worker.RunWorkerAsync(logFileNames);
         }
 
-        private static string GetFileName(string fileName) {
-            string[] filePath = fileName.Split('\\');
-            return filePath[^1];
-        }
-
 
         public void JsonFormatChanged(string str) {
             analysisData = JsonConvert.DeserializeObject<AnalysisData>(str);
+
+            SeriesCollection.Clear();
+            Labels = new string[analysisData.filters.Count];
+
+            BusyIndicator.IsBusy = true;
+            worker.RunWorkerAsync(logFiles);
         }
 
         private void ClearLogFiles(object sender, RoutedEventArgs e) {
@@ -131,7 +141,13 @@ namespace LogVisualizer {
             openFileDialog.RestoreDirectory = true;
 
             if (openFileDialog.ShowDialog() == true) {
-                AnalyzeLogFiles(openFileDialog.FileNames);
+                string[] openLogFiles = openFileDialog.FileNames;
+
+                foreach (string logFile in openLogFiles) {
+                    logFiles.Add(logFile);
+                }
+
+                AnalyzeLogFiles(openLogFiles.ToList());
             }
         }
 
@@ -167,6 +183,11 @@ namespace LogVisualizer {
                 Values = new ChartValues<double>(logValues),
                 Fill = ChartColor.colorList[SeriesCollection.Count]
             });
+        }
+
+        private static string GetFileName(string fileName) {
+            string[] filePath = fileName.Split('\\');
+            return filePath[^1];
         }
 
         private void DragOverView(object sender, DragEventArgs e) {
