@@ -1,11 +1,7 @@
 ﻿using LogVisualizer.util;
-using Newtonsoft.Json;
-using System;
 using System.ComponentModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using static LogVisualizer.JsonData;
 
 namespace LogVisualizer.view {
     /// <summary>

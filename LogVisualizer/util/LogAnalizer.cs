@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace LogVisualizer.util {
     internal class LogAnalizer {
@@ -13,6 +10,7 @@ namespace LogVisualizer.util {
         public LogAnalizer(ILogAnalizerCallback callback) {
             this.callback = callback;
         }
+
         public void Analyze(string logFile, List<JsonData.Filters> jsonFilters) {
             FileStream fileStream = new FileStream(logFile, FileMode.Open, FileAccess.Read);
 
@@ -21,17 +19,20 @@ namespace LogVisualizer.util {
                 int sectionCount = 0;
 
                 Dictionary<string, LogData> logDictionary = new Dictionary<string, LogData>();
+
                 while ((line = streamReader.ReadLine()) != null) {
                     foreach (var data in jsonFilters) {
-                        // Todo : %d%d-%d%d regex 일 경우에만 수행
-                        if (line.Contains(data.start) && !logDictionary.ContainsKey(data.name)) {
-                            logDictionary.Add(data.name, new LogData(line));
-                        } else if (line.Contains(data.end) && logDictionary.ContainsKey(data.name)) {
-                            logDictionary[data.name].endLog = line;
-                            logDictionary[data.name].calculateInterval();
+                        var sectionName = data.name;
 
-                            int interval = (int)logDictionary[data.name].interval;
-                            callback.OnFilteredLogSection(data.name, sectionCount++, interval);
+                        // Todo : %d%d-%d%d regex 일 경우에만 수행
+                        if (line.Contains(data.start) && !logDictionary.ContainsKey(sectionName)) {
+                            logDictionary.Add(sectionName, new LogData(line));
+                        } else if (line.Contains(data.end) && logDictionary.ContainsKey(sectionName)) {
+                            logDictionary[sectionName].endLog = line;
+                            logDictionary[sectionName].calculateInterval();
+
+                            int interval = (int) logDictionary[sectionName].interval;
+                            callback.OnFilteredLogSection(sectionName, sectionCount++, interval);
                         }
                     }
 
@@ -43,7 +44,6 @@ namespace LogVisualizer.util {
             }
         }
     }
-
 
     interface ILogAnalizerCallback {
 

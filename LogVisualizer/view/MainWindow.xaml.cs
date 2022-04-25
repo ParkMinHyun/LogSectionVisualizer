@@ -169,10 +169,10 @@ namespace LogVisualizer {
                 logSectionIntervals.Add(logSection.interval);
             }
 
-            drawChart(logFile, logSectionIntervals);
+            DrawChart(logFile, logSectionIntervals);
         }
 
-        private void drawChart(string logFile, List<double> logSectionIntervals) {
+        private void DrawChart(string logFile, List<double> logSectionIntervals) {
             this.Dispatcher.Invoke(() => {
                 ClearLogPanel.Visibility = Visibility.Visible;
                 ExtractLogPanel.Visibility = Visibility.Visible;
