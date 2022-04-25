@@ -39,7 +39,7 @@ namespace LogVisualizer {
         }
 
         private void LoadJson() {
-            var jsonString = JsonUtil.GetJsonString();
+            var jsonString = JsonUtil.LoadJsonString();
 
             if (!JsonUtil.CheckJsonFormat(jsonString)) {
                 MessageBox.Show("Can't convert json. Please check json format again");
@@ -124,9 +124,7 @@ namespace LogVisualizer {
             SeriesCollection.Clear();
         }
 
-        private void ExtractLogSection(object sender, RoutedEventArgs e) {
-            Clipboard.SetText(logText);
-        }
+        private void ExtractLogSection(object sender, RoutedEventArgs e) => Clipboard.SetText(logText);
 
         private void ChangeJsonFilter(object sender, RoutedEventArgs e) {
             this.Effect = new BlurEffect();
@@ -186,13 +184,9 @@ namespace LogVisualizer {
             });
         }
 
-        private static string GetFileName(string fileName) {
-            return fileName.Split('\\')[^1];
-        }
+        private static string GetFileName(string fileName) => fileName.Split('\\')[^1];
 
-        private void DragOverView(object sender, DragEventArgs e) {
-            e.Handled = true;
-        }
+        private void DragOverView(object sender, DragEventArgs e) => e.Handled = true;
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e) {
             if (e.ChangedButton != MouseButton.Left) {
@@ -202,13 +196,9 @@ namespace LogVisualizer {
             this.DragMove();
         }
 
-        private void MinimizeButtonClicked(object sender, RoutedEventArgs e) {
-            this.WindowState = WindowState.Minimized;
-        }
+        private void MinimizeButtonClicked(object sender, RoutedEventArgs e) => this.WindowState = WindowState.Minimized;
 
-        private void CloseButtonClicked(object sender, RoutedEventArgs e) {
-            this.Close();
-        }
+        private void CloseButtonClicked(object sender, RoutedEventArgs e) => this.Close();
 
         public SeriesCollection SeriesCollection { get; set; }
         public string[] Labels { get; set; }

@@ -23,9 +23,7 @@ namespace LogVisualizer.view {
             Closing += OnWindowClosing;
         }
 
-        private void LoadJson() {
-            JsonFormatView.Text = JsonUtil.GetJsonString();
-        }
+        private void LoadJson() => JsonFormatView.Text = JsonUtil.LoadJsonString();
 
         public JsonFilterDialog(DependencyObject depObject) : this() {
             Owner = Window.GetWindow(depObject);
@@ -44,13 +42,10 @@ namespace LogVisualizer.view {
             parentWindow.JsonFormatChanged(jsonString);
             this.Close();
         }
-        private void OnWindowClosing(object sender, CancelEventArgs e) {
-            parentWindow.Effect = null;
-        }
 
-        private void CancelButtonClicked(object sender, RoutedEventArgs e) {
-            this.Close();
-        }
+        private void CancelButtonClicked(object sender, RoutedEventArgs e) => this.Close();
+
+        private void OnWindowClosing(object sender, CancelEventArgs e) => parentWindow.Effect = null;
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e) {
             if (e.ChangedButton != MouseButton.Left) {

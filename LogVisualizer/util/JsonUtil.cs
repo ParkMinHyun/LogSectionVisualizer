@@ -12,15 +12,14 @@ namespace LogVisualizer.util {
         public static bool CheckJsonFormat(String jsonString) {
             try {
                 JsonConvert.DeserializeObject<AnalysisData>(jsonString);
+                return true;
             } catch {
                 return false;
             }
-
-            return true;
         }
 
-        public static string GetJsonString() {
-            string jsonText = LoadJsonString();
+        public static string LoadJsonString() {
+            string jsonText = GetAppJsonString();
 
             if (jsonText != null) {
                 return jsonText;
@@ -31,15 +30,18 @@ namespace LogVisualizer.util {
             }
         }
 
-        public static string LoadJsonString() => ConfigurationManager.AppSettings[JSON_FORMAT];
+        public static void SaveJsonString(String jsonString) => SetAppJsonString(jsonString);
 
-        public static void SaveJsonString(String jsonString) {
+        private static string GetAppJsonString() => ConfigurationManager.AppSettings[JSON_FORMAT];
+
+        private static void SetAppJsonString(String jsonString) {
             Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            AppSettingsSection appSettingsSections = configuration.AppSettings;
 
-            if (configuration.AppSettings.Settings[JSON_FORMAT] == null) {
-                configuration.AppSettings.Settings.Add(JSON_FORMAT, jsonString);
+            if (appSettingsSections.Settings[JSON_FORMAT] == null) {
+                appSettingsSections.Settings.Add(JSON_FORMAT, jsonString);
             } else {
-                configuration.AppSettings.Settings[JSON_FORMAT].Value = jsonString;
+                appSettingsSections.Settings[JSON_FORMAT].Value = jsonString;
             }
 
             configuration.Save(ConfigurationSaveMode.Full, true);
