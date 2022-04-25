@@ -13,6 +13,7 @@ using System.Windows.Input;
 using static LogVisualizer.JsonData;
 using LogVisualizer.view;
 using System.Windows.Media.Effects;
+using LogVisualizer.util;
 
 namespace LogVisualizer {
 
@@ -38,20 +39,14 @@ namespace LogVisualizer {
         }
 
         private void LoadJson() {
-            string applicationPath = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory);
-            string jsonFilePath = Path.Combine(applicationPath, JSON_FORMAT_FILE_NAME);
-            string sampleJsonText;
+            var jsonString = JsonUtil.GetJsonString();
 
-            if (File.Exists(jsonFilePath)) {
-                sampleJsonText = File.ReadAllText(jsonFilePath);
-            } else {
-                using (StreamReader reader = new StreamReader(DEFAULT_JSON_FORMAT_FILE_NAME)) {
-                    sampleJsonText = reader.ReadToEnd();
-                }
+            if (!JsonUtil.CheckJsonFormat(jsonString)) {
+                MessageBox.Show("Can't convert json. Please check json format again");
+                this.Close();
             }
 
-            // JsonFormatView.Text = sampleJsonText;
-            analysisData = JsonConvert.DeserializeObject<AnalysisData>(sampleJsonText);
+            analysisData = JsonConvert.DeserializeObject<AnalysisData>(jsonString);
         }
 
         private void InitView() {
@@ -177,12 +172,6 @@ namespace LogVisualizer {
 
         private void ExtractLogSection(object sender, RoutedEventArgs e) {
             Clipboard.SetText(logText);
-        }
-
-        private void JsonFormatChanged(object sender, RoutedEventArgs e) {
-            string applicationPath = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory);
-            string saveFilePath = Path.Combine(applicationPath, JSON_FORMAT_FILE_NAME);
-            // File.WriteAllText(saveFilePath, JsonFormatView.Text);
         }
 
         private void ChangeJsonFilter(object sender, RoutedEventArgs e) {

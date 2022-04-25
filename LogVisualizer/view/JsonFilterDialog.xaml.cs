@@ -1,17 +1,17 @@
-﻿using System;
+﻿using LogVisualizer.util;
+using Newtonsoft.Json;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using static LogVisualizer.JsonData;
 
 namespace LogVisualizer.view {
     /// <summary>
     /// JsonFilterDialog.xaml에 대한 상호 작용 논리
     /// </summary>
     public partial class JsonFilterDialog : Window {
-
-        private static string JSON_FORMAT_FILE_NAME = "JsonFormat.txt";
-        private static string DEFAULT_JSON_FORMAT_FILE_NAME = @"sample.json";
 
         private MainWindow parentWindow;
 
@@ -28,19 +28,7 @@ namespace LogVisualizer.view {
         }
 
         private void LoadJson() {
-            string applicationPath = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory);
-            string jsonFilePath = Path.Combine(applicationPath, JSON_FORMAT_FILE_NAME);
-            string sampleJsonText;
-
-            if (File.Exists(jsonFilePath)) {
-                sampleJsonText = File.ReadAllText(jsonFilePath);
-            } else {
-                using (StreamReader reader = new StreamReader(DEFAULT_JSON_FORMAT_FILE_NAME)) {
-                    sampleJsonText = reader.ReadToEnd();
-                }
-            }
-
-            JsonFormatView.Text = sampleJsonText;
+            JsonFormatView.Text = JsonUtil.GetJsonString();
         }
 
         public JsonFilterDialog(DependencyObject depObject) : this() {
@@ -49,9 +37,15 @@ namespace LogVisualizer.view {
         }
 
         private void ChangeButtonClicked(object sender, RoutedEventArgs e) {
-            parentWindow.JsonFormatChanged(JsonFormatView.Text);
-            // analysisData = JsonConvert.DeserializeObject<AnalysisData>(sampleJsonText);
+            var jsonString = JsonFormatView.Text;
 
+            if (!JsonUtil.CheckJsonFormat(jsonString)) {
+                MessageBox.Show("Can't convert json. Please check json format again");
+                return;
+            }
+
+            JsonUtil.SaveJsonString(jsonString);
+            parentWindow.JsonFormatChanged(jsonString);
             this.Close();
         }
         private void OnWindowClosing(object sender, CancelEventArgs e) {

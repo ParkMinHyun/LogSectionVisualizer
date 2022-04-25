@@ -8,31 +8,22 @@
              AllowsTransparency="True"
              WindowStyle="None" 
              WindowStartupLocation="CenterScreen"
-             Height="500" Width="400" >
+             Height="520" Width="400" >
 
     <Border CornerRadius="10" Background="#FFE2E2E2" >
         <StackPanel Margin="10,10,10,10" Orientation="Vertical">
             <ContentControl>
                 <DockPanel>
                     <StackPanel Orientation="Horizontal"  Width="Auto" HorizontalAlignment="Left" >
-                        <Image Source="../icon/setting_black.png" Width="20" Height="Auto" Stretch="Uniform" />
+                        <Image Source="../icon/gear.png" Width="20" Height="Auto" Stretch="Uniform" />
                         <TextBlock Text="Json Filter" Margin="5,0,0,0" VerticalAlignment="Center" Height="20" Width="Auto" Foreground="Black" FontWeight="Bold" FontSize="14" />
                     </StackPanel>
-
-                    <!--<StackPanel HorizontalAlignment="Right">
-
-                        <Button Content="X" Background="#D73C46" Foreground="White" Margin="-3" BorderThickness="0" Width="20" Height="20" Click="CancelButtonClicked" HorizontalAlignment="Center" FontWeight="Bold">
-                            <Button.Resources>
-                                <Style TargetType="{x:Type Border}">
-                                    <Setter Property="CornerRadius" Value="5"/>
-                                </Style>
-                            </Button.Resources>
-                        </Button>
-                    </StackPanel>-->
                 </DockPanel>
             </ContentControl>
 
-            <ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Height="400" VerticalAlignment="Stretch" Margin="5,15,0,0">
+            <StackPanel Margin="0,2,0,2" Width="Auto" Height="0" Background="DarkGray"/>
+            
+            <ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Height="420" VerticalAlignment="Stretch" Margin="5,15,0,0">
                 <Border CornerRadius="10" VerticalAlignment="Top">
                     <TextBox x:Name="JsonFormatView" Margin="0,0,12,0" Width="Auto" Height="Auto" FontWeight="Heavy" AcceptsReturn="True" BorderThickness="0" Background="#FFE2E2E2"/>
                 </Border>
