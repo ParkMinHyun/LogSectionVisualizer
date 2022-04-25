@@ -58,38 +58,38 @@
 
             <DockPanel Grid.Row="1">
                 <StackPanel Orientation="Horizontal" Margin="0,10,5,15" HorizontalAlignment="Right">
-                    <Button HorizontalAlignment="Left" Click="ClearLogFiles" BorderThickness="0"  Height="20" Width="Auto" Background="Transparent" VerticalAlignment="Top">
+                    <Button HorizontalAlignment="Left" Click="ClearLogFiles" Margin="10,0,0,0" BorderThickness="0"  Height="25" Width="Auto" Background="Transparent" VerticalAlignment="Top">
                         <ContentControl>
                             <StackPanel Name="ClearLogPanel" Visibility="Collapsed" Orientation="Horizontal"  Width="Auto" HorizontalAlignment="Left">
-                                <Image Source="../icon/eraser_black.png" Width="20" Height="Auto" Stretch="Uniform" />
-                                <TextBlock Text="Clear Log Files" Margin="5,2.5,0,0"  VerticalAlignment="Center" Height="20" Width="Auto" Foreground="DimGray" FontWeight="Bold" />
+                                <Image Source="../icon/eraser.png" Height="20" Stretch="Uniform" />
+                                <TextBlock Text="Clear Graph" Margin="4,2.5,0,0"  VerticalAlignment="Center" Height="20" Width="Auto" FontWeight="Bold" Foreground="#FF484848" />
                             </StackPanel>
                         </ContentControl>
                     </Button>
 
-                    <Button HorizontalAlignment="Left" Click="ExtractLogSection" Margin="10,0,0,0" BorderThickness="0" Height="20" Width="Auto" Background="Transparent" VerticalAlignment="Top">
+                    <Button HorizontalAlignment="Left" Click="ExtractLogSection" Margin="10,0,0,0" BorderThickness="0"  Height="25" Width="Auto" Background="Transparent" VerticalAlignment="Top">
                         <ContentControl>
                             <StackPanel Name="ExtractLogPanel" Visibility="Collapsed" Orientation="Horizontal"  Width="Auto" HorizontalAlignment="Left">
-                                <Image Source="../icon/copy_black.png" Width="20" Height="Auto" Stretch="Uniform" />
-                                <TextBlock Text="Extract Log" Margin="5,2.5,0,0"  VerticalAlignment="Center" Height="20" Width="Auto" Foreground="DimGray" FontWeight="Bold" />
+                                <Image Source="../icon/copy.png" Height="20" Stretch="Uniform" />
+                                <TextBlock Text="Extract Log" Margin="4,2.5,0,0"  VerticalAlignment="Center" Height="20" Width="Auto" FontWeight="Bold" Foreground="#FF484848" />
                             </StackPanel>
                         </ContentControl>
                     </Button>
 
-                    <Button HorizontalAlignment="Left" Click="ChangeJsonFilter" Margin="10,0,0,0" BorderThickness="0"  Height="20" Width="Auto" Background="Transparent" VerticalAlignment="Top">
+                    <Button HorizontalAlignment="Left" Click="ChangeJsonFilter" Margin="10,0,0,0" BorderThickness="0"  Height="25" Width="Auto" Background="Transparent" VerticalAlignment="Top">
                         <ContentControl>
                             <StackPanel Orientation="Horizontal"  Width="Auto" HorizontalAlignment="Left">
-                                <Image Source="../icon/setting_black.png" Width="20" Height="Auto" Stretch="Uniform" />
-                                <TextBlock Text="Json Filter" Margin="5,2.5,0,0"  VerticalAlignment="Center" Height="20" Width="Auto" Foreground="DimGray" FontWeight="Bold" />
+                                <Image Source="../icon/gear.png" Height="20" Stretch="Uniform" />
+                                <TextBlock Text="Json Filter" Margin="4,2.5,0,0"  VerticalAlignment="Center" Height="20" Width="Auto" FontWeight="Bold" Foreground="#FF484848" />
                             </StackPanel>
                         </ContentControl>
                     </Button>
 
-                    <Button HorizontalAlignment="Left" Margin="10,0,0,0" Click="OpenLogFile" BorderThickness="0" Height="20" Width="Auto" Background="Transparent" VerticalAlignment="Top">
+                    <Button HorizontalAlignment="Left" Margin="10,0,0,0" Click="OpenLogFile" BorderThickness="0" Height="25" Width="Auto" Background="Transparent" VerticalAlignment="Top">
                         <ContentControl>
                             <StackPanel Orientation="Horizontal"  Width="Auto" HorizontalAlignment="Left">
-                                <Image Source="../icon/plus_black.png" Width="20" Height="15" Stretch="Uniform" />
-                                <TextBlock Text="Add Log File" Margin="5,2.5,0,0" VerticalAlignment="Center" Height="20" Width="Auto" Foreground="DimGray" FontWeight="Bold" />
+                                <Image Source="../icon/file.png" Stretch="Uniform" />
+                                <TextBlock Text="Add Log File" Margin="4,2.5,0,0" VerticalAlignment="Center" Height="20" Width="Auto" Foreground="#FF484848" FontWeight="Bold" />
                             </StackPanel>
                         </ContentControl>
                     </Button>
@@ -97,7 +97,7 @@
             </DockPanel>
 
             <busyindicator:BusyMask Background="Transparent" Grid.Row="2" x:Name="BusyIndicator" IsBusy="False" IndicatorType="Cupertino" BusyContent="Loading log files...">
-                <lvc:CartesianChart Series="{Binding SeriesCollection}" Foreground="DimGray" LegendLocation="Top" Margin="0,0,0,10" >
+                <lvc:CartesianChart Series="{Binding SeriesCollection}" Foreground="#FF4C4C4C" LegendLocation="Top" Margin="0,0,0,10" >
                     <lvc:CartesianChart.AxisX>
                         <lvc:Axis Labels="{Binding Labels}" FontSize="15" LabelFormatter="{Binding Formatter}" Foreground="Gray" IsEnabled="False">
                             <lvc:Axis.Separator>

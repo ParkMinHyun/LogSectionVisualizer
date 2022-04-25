@@ -34,7 +34,7 @@
 
             <ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" Height="400" VerticalAlignment="Stretch" Margin="5,15,0,0">
                 <Border CornerRadius="10" VerticalAlignment="Top">
-                    <TextBox x:Name="JsonFormatView" Margin="0,0,12,0" Width="Auto" Height="Auto" FontWeight="Heavy" AcceptsReturn="True" BorderThickness="0" Background="#FFEFEEEE"/>
+                    <TextBox x:Name="JsonFormatView" Margin="0,0,12,0" Width="Auto" Height="Auto" FontWeight="Heavy" AcceptsReturn="True" BorderThickness="0" Background="#FFE2E2E2"/>
                 </Border>
             </ScrollViewer>
 
