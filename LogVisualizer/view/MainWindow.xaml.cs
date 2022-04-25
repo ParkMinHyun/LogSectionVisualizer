@@ -106,9 +106,10 @@ namespace LogVisualizer {
         public void JsonFormatChanged(string str) {
             analysisData = JsonConvert.DeserializeObject<AnalysisData>(str);
 
-            SeriesCollection.Clear();
             Labels = new string[analysisData.filters.Count];
 
+            SeriesCollection.Clear();
+            
             BusyIndicator.IsBusy = true;
             worker.RunWorkerAsync(analysislogFiles);
         }

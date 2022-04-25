@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:local="clr-namespace:LogVisualizer"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-        xmlns:busyindicator="https://github.com/Peoky/BusyIndicator" xmlns:st="http://schemas.spicytaco.io/"
+        xmlns:busyindicator="https://github.com/Peoky/BusyIndicator"
         mc:Ignorable="d" 
 	    AllowDrop="True"
 	    Drop="DragDropLogFile"

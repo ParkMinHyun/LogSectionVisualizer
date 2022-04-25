@@ -1,13 +1,13 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Configuration;
 using System.IO;
 using static LogVisualizer.JsonData;
 
 namespace LogVisualizer.util {
     internal class JsonUtil {
-
-        private static string JSON_FORMAT_FILE_NAME = "JsonFormat.txt";
-        private static string DEFAULT_JSON_FORMAT_FILE_NAME = @"sample.json";
+        private const string JSON_FORMAT = "jsonFormat";
+        private const string SAMPLE_JSON_FORMAT_FILE_NAME = @"sample.json";
 
         public static bool CheckJsonFormat(String jsonString) {
             try {
@@ -20,25 +20,30 @@ namespace LogVisualizer.util {
         }
 
         public static string GetJsonString() {
-            string applicationPath = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory);
-            string jsonFilePath = Path.Combine(applicationPath, JSON_FORMAT_FILE_NAME);
-            string sampleJsonText;
+            string jsonText = LoadJsonString();
 
-            if (File.Exists(jsonFilePath)) {
-                sampleJsonText = File.ReadAllText(jsonFilePath);
-            } else {
-                using (StreamReader reader = new StreamReader(DEFAULT_JSON_FORMAT_FILE_NAME)) {
-                    sampleJsonText = reader.ReadToEnd();
-                }
+            if (jsonText != null) {
+                return jsonText;
             }
 
-            return sampleJsonText;
+            using (StreamReader reader = new StreamReader(SAMPLE_JSON_FORMAT_FILE_NAME)) {
+                return reader.ReadToEnd();
+            }
         }
 
+        public static string LoadJsonString() => ConfigurationManager.AppSettings[JSON_FORMAT];
+
         public static void SaveJsonString(String jsonString) {
-            using (StreamWriter file = new StreamWriter(DEFAULT_JSON_FORMAT_FILE_NAME)) {
-                file.Write(jsonString);
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            if (configuration.AppSettings.Settings[JSON_FORMAT] == null) {
+                configuration.AppSettings.Settings.Add(JSON_FORMAT, jsonString);
+            } else {
+                configuration.AppSettings.Settings[JSON_FORMAT].Value = jsonString;
             }
+
+            configuration.Save(ConfigurationSaveMode.Full, true);
+            ConfigurationManager.RefreshSection("appSettings");
         }
     }
 }
