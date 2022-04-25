@@ -5,37 +5,36 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:local="clr-namespace:LogVisualizer"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-        xmlns:busyindicator="https://github.com/Peoky/BusyIndicator"
+        xmlns:busyindicator="https://github.com/Peoky/BusyIndicator" xmlns:st="http://schemas.spicytaco.io/"
         mc:Ignorable="d" 
 	    AllowDrop="True"
 	    Drop="DragDropLogFile"
         Title="Log Visualizer"
         ResizeMode="CanResizeWithGrip"
         PreviewDragOver="DragOverView"
-        Background="Transparent" Foreground="DimGray" AllowsTransparency="True" WindowStyle="None" WindowStartupLocation="CenterScreen"
+        Background="Transparent" Foreground="#FF636363" AllowsTransparency="True" WindowStyle="None" WindowStartupLocation="CenterScreen"
         Height="600" Width="800" d:DataContext="{d:DesignInstance  local:MainWindow}">
 
     <Window.Resources>
-        <SolidColorBrush x:Key="IndicatorForeground" Color="Beige" />
-        <SolidColorBrush x:Key="IndicatorBackground" Color="WhiteSmoke" />
+        <SolidColorBrush x:Key="IndicatorForeground" Color="#FF636363" />
+        <SolidColorBrush x:Key="IndicatorBackground" Color="#FF636363" />
     </Window.Resources>
-
 
     <Grid Margin="10">
         <Grid.Effect>
             <DropShadowEffect BlurRadius="10" Direction="-90" RenderingBias="Quality" ShadowDepth="2"/>
         </Grid.Effect>
-        <Border CornerRadius="10, 10, 10, 10">
-            <Border.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#F5F5F5" Offset="0.437"/>
-                    <GradientStop Color="#F5F5F5" Offset="1"/>
-                </LinearGradientBrush>
-            </Border.Background>
-        </Border>
+        <Border CornerRadius="10, 10, 10, 10" Background="#F5F5F5"/>
 
-        <StackPanel Margin="10,5,10,0" >
-            <DockPanel>
+        <Grid Margin="10,5,10,0" VerticalAlignment="Stretch" Height="Auto">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <DockPanel Grid.Row="0">
                 <TextBlock Margin="5,5,0,0" Text="Log Section Visualizer" FontSize="25" FontWeight="UltraBlack"/>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -57,8 +56,7 @@
                 </StackPanel>
             </DockPanel>
 
-
-            <DockPanel>
+            <DockPanel Grid.Row="1">
                 <StackPanel Orientation="Horizontal" Margin="0,10,5,15" HorizontalAlignment="Right">
                     <Button HorizontalAlignment="Left" Click="ClearLogFiles" BorderThickness="0"  Height="20" Width="Auto" Background="Transparent" VerticalAlignment="Top">
                         <ContentControl>
@@ -95,14 +93,11 @@
                             </StackPanel>
                         </ContentControl>
                     </Button>
-
-
                 </StackPanel>
             </DockPanel>
 
-
-            <busyindicator:BusyMask Background="Transparent" x:Name="BusyIndicator" IsBusy="False" IndicatorType="Cupertino" BusyContent="Loading log files...">
-                <lvc:CartesianChart Series="{Binding SeriesCollection}" Foreground="DimGray" LegendLocation="Top" >
+            <busyindicator:BusyMask Background="Transparent" Grid.Row="2" x:Name="BusyIndicator" IsBusy="False" IndicatorType="Cupertino" BusyContent="Loading log files...">
+                <lvc:CartesianChart Series="{Binding SeriesCollection}" Foreground="DimGray" LegendLocation="Top" Margin="0,0,0,10" >
                     <lvc:CartesianChart.AxisX>
                         <lvc:Axis Labels="{Binding Labels}" FontSize="15" LabelFormatter="{Binding Formatter}" Foreground="Gray" IsEnabled="False">
                             <lvc:Axis.Separator>
@@ -122,7 +117,7 @@
                     </lvc:CartesianChart.DataTooltip>
                 </lvc:CartesianChart>
             </busyindicator:BusyMask>
-        </StackPanel>
+        </Grid>
 
     </Grid>
 </Window>
