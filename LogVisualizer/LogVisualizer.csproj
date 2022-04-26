@@ -13,10 +13,14 @@
     <None Remove="icon\eraser.png" />
     <None Remove="icon\file.png" />
     <None Remove="icon\gear.png" />
+    <None Remove="sample.json" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="chart.ico" />
+    <Content Include="sample.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -34,12 +38,6 @@
     <Resource Include="icon\eraser.png" />
     <Resource Include="icon\file.png" />
     <Resource Include="icon\gear.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="sample.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

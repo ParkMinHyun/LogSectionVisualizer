@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using LogVisualizer.data;
+using Newtonsoft.Json;
 using System;
 using System.Configuration;
 using System.IO;
@@ -7,7 +8,6 @@ using static LogVisualizer.JsonData;
 namespace LogVisualizer.util {
     internal class JsonUtil {
         private const string JSON_FORMAT = "jsonFormat";
-        private const string SAMPLE_JSON_FORMAT_FILE_NAME = @"sample.json";
 
         public static bool CheckJsonFormat(String jsonString) {
             try {
@@ -25,9 +25,7 @@ namespace LogVisualizer.util {
                 return jsonText;
             }
 
-            using (StreamReader reader = new StreamReader(SAMPLE_JSON_FORMAT_FILE_NAME)) {
-                return reader.ReadToEnd();
-            }
+            return SampleData.json;
         }
 
         public static void SaveJsonString(String jsonString) => SetAppJsonString(jsonString);
