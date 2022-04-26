@@ -151,7 +151,7 @@ namespace LogVisualizer {
         }
 
         public void OnFilteredLogSection(string sectionName, int sectionCount, int interval) {
-            Labels[sectionCount] = sectionName;
+            this.Dispatcher.Invoke(() => { Labels[sectionCount] = sectionName; });
 
             if (maxAxisYValue < interval) {
                 maxAxisYValue = interval;
