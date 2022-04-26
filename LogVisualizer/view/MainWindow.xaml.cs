@@ -107,6 +107,9 @@ namespace LogVisualizer {
 
 
         public void JsonFormatChanged(string str) {
+            logText = null;
+            maxAxisYValue = 1000;
+            AxisY.MaxValue = maxAxisYValue;
             SeriesCollection.Clear();
 
             analysisData = JsonConvert.DeserializeObject<AnalysisData>(str);
