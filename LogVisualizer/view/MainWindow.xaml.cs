@@ -53,7 +53,8 @@ namespace LogVisualizer {
         private void InitView() {
             SeriesCollection = new SeriesCollection { };
 
-            Labels = new string[analysisData.filters.Count];
+            AxisX.Labels = new List<string>();
+
             Formatter = value => value.ToString("n");
 
             MouseDown += Window_MouseDown;
@@ -112,8 +113,9 @@ namespace LogVisualizer {
             AxisY.MaxValue = maxAxisYValue;
             SeriesCollection.Clear();
 
+            AxisX.Labels = new List<string>();
             analysisData = JsonConvert.DeserializeObject<AnalysisData>(str);
-            Labels = new string[analysisData.filters.Count];
+
 
             BusyIndicator.IsBusy = true;
             worker.RunWorkerAsync(analysislogFiles);
@@ -154,7 +156,9 @@ namespace LogVisualizer {
         }
 
         public void OnFilteredLogSection(string sectionName, int sectionCount, int interval) {
-            this.Dispatcher.Invoke(() => { Labels[sectionCount] = sectionName; });
+            if (!AxisX.Labels.Contains(sectionName)) {
+                AxisX.Labels.Add(sectionName);
+            }
 
             if (maxAxisYValue < interval) {
                 maxAxisYValue = interval;
@@ -166,7 +170,7 @@ namespace LogVisualizer {
             var logSectionIntervals = new List<double>();
 
             logText += GetFileName(logFile) + "\n";
-            foreach (var label in Labels) {
+            foreach (var label in AxisX.Labels) {
                 var logSection = logDictionary[label];
 
                 logText += "[ " + label + " - " + logSection.interval + "ms ]\n";
@@ -220,7 +224,7 @@ namespace LogVisualizer {
         private void CloseButtonClicked(object sender, RoutedEventArgs e) => this.Close();
 
         public SeriesCollection SeriesCollection { get; set; }
-        public string[] Labels { get; set; }
+
         public Func<double, string> Formatter { get; set; }
     }
 }
