@@ -116,6 +116,7 @@ namespace LogVisualizer {
 
         private void ClearLogFiles(object sender, RoutedEventArgs e) {
             logText = null;
+            maxAxisYValue = 1000;
 
             ClearLogPanel.Visibility = Visibility.Collapsed;
             ExtractLogPanel.Visibility = Visibility.Collapsed;
