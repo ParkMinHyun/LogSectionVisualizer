@@ -13,6 +13,8 @@
     <None Remove="icon\eraser.png" />
     <None Remove="icon\file.png" />
     <None Remove="icon\gear.png" />
+    <None Remove="icon\init.png" />
+    <None Remove="icon\init_mouse_over.png" />
     <None Remove="sample.json" />
   </ItemGroup>
 
@@ -38,6 +40,8 @@
     <Resource Include="icon\eraser.png" />
     <Resource Include="icon\file.png" />
     <Resource Include="icon\gear.png" />
+    <Resource Include="icon\init.png" />
+    <Resource Include="icon\init_mouse_over.png" />
   </ItemGroup>
 
 </Project>

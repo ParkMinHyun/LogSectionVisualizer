@@ -13,6 +13,7 @@ using LogVisualizer.view;
 using System.Windows.Media.Effects;
 using LogVisualizer.util;
 using System.Linq;
+using System.Windows.Media.Imaging;
 
 namespace LogVisualizer {
 
@@ -99,6 +100,8 @@ namespace LogVisualizer {
             analysislogFiles.AddRange(logFileNames);
 
             BusyIndicator.IsBusy = true;
+            InitGuideBox.Visibility = Visibility.Collapsed;
+
             worker.RunWorkerAsync(logFileNames);
         }
 
@@ -108,7 +111,7 @@ namespace LogVisualizer {
 
             analysisData = JsonConvert.DeserializeObject<AnalysisData>(str);
             Labels = new string[analysisData.filters.Count];
-            
+
             BusyIndicator.IsBusy = true;
             worker.RunWorkerAsync(analysislogFiles);
         }
@@ -117,6 +120,7 @@ namespace LogVisualizer {
             logText = null;
             maxAxisYValue = 1000;
 
+            InitGuideBox.Visibility = Visibility.Visible;
             ClearLogPanel.Visibility = Visibility.Collapsed;
             ExtractLogPanel.Visibility = Visibility.Collapsed;
 
@@ -193,7 +197,17 @@ namespace LogVisualizer {
                 return;
             }
 
-            this.DragMove();
+            try { this.DragMove(); } catch { }
+        }
+
+        private void InitGuideBox_MouseEnter(object sender, MouseEventArgs e) {
+            InitGuideBox.Source = new BitmapImage(new Uri("pack://application:,,,/icon/init_mouse_over.png"));
+            InitGuideBox.Margin = new Thickness(124);
+        }
+
+        private void InitGuideBox_MouseLeave(object sender, MouseEventArgs e) {
+            InitGuideBox.Source = new BitmapImage(new Uri("pack://application:,,,/icon/init.png"));
+            InitGuideBox.Margin = new Thickness(125);
         }
 
         private void MinimizeButtonClicked(object sender, RoutedEventArgs e) => this.WindowState = WindowState.Minimized;

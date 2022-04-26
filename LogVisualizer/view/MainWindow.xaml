@@ -97,7 +97,7 @@
             </DockPanel>
 
             <busyindicator:BusyMask Background="Transparent" Grid.Row="2" x:Name="BusyIndicator" IsBusy="False" IndicatorType="Cupertino" BusyContent="Loading log files...">
-                <lvc:CartesianChart Series="{Binding SeriesCollection}" Foreground="#FF4C4C4C" LegendLocation="Top" Margin="0,0,0,10" >
+                <lvc:CartesianChart Series="{Binding SeriesCollection}" Foreground="#FF4C4C4C" LegendLocation="Top" Margin="0,0,0,10">
                     <lvc:CartesianChart.AxisX>
                         <lvc:Axis Labels="{Binding Labels}" FontSize="15" LabelFormatter="{Binding Formatter}" Foreground="Gray" IsEnabled="False">
                             <lvc:Axis.Separator>
@@ -117,6 +117,8 @@
                     </lvc:CartesianChart.DataTooltip>
                 </lvc:CartesianChart>
             </busyindicator:BusyMask>
+
+            <Image Name="InitGuideBox" Source="../icon/init.png" Grid.Row="2" Margin="125"  Stretch="Uniform" MouseDown="OpenLogFile" MouseEnter="InitGuideBox_MouseEnter" MouseLeave="InitGuideBox_MouseLeave"/>
         </Grid>
 
     </Grid>
