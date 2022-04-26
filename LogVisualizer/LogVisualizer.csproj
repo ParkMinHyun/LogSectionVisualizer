@@ -19,7 +19,7 @@
   <ItemGroup>
     <Content Include="chart.ico" />
     <Content Include="sample.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

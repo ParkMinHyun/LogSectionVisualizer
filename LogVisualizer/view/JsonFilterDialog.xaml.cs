@@ -10,6 +10,7 @@ namespace LogVisualizer.view {
     public partial class JsonFilterDialog : Window {
 
         private MainWindow parentWindow;
+        private string initText;
 
         public JsonFilterDialog() {
             InitializeComponent();
@@ -23,11 +24,24 @@ namespace LogVisualizer.view {
             Closing += OnWindowClosing;
         }
 
-        private void LoadJson() => JsonFormatView.Text = JsonUtil.LoadJsonString();
+        private void LoadJson() {
+            initText = JsonUtil.LoadJsonString();
+
+            JsonFormatView.Text = initText;
+        }
 
         public JsonFilterDialog(DependencyObject depObject) : this() {
             Owner = Window.GetWindow(depObject);
             parentWindow = Owner as MainWindow;
+        }
+
+        private void JsonFormatView_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {
+            if (initText == JsonFormatView.Text) {
+                ChangeButton.Visibility = Visibility.Collapsed;
+                return;
+            } 
+
+            ChangeButton.Visibility = Visibility.Visible;
         }
 
         private void ChangeButtonClicked(object sender, RoutedEventArgs e) {
@@ -43,9 +57,9 @@ namespace LogVisualizer.view {
             this.Close();
         }
 
-        private void CancelButtonClicked(object sender, RoutedEventArgs e) => this.Close();
-
         private void OnWindowClosing(object sender, CancelEventArgs e) => parentWindow.Effect = null;
+
+        private void CloseButtonClicked(object sender, RoutedEventArgs e) => this.Close();
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e) {
             if (e.ChangedButton != MouseButton.Left) {
