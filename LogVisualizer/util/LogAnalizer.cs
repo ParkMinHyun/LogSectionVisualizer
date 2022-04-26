@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Windows;
 
 namespace LogVisualizer.util {
     internal class LogAnalizer {
@@ -41,6 +42,8 @@ namespace LogVisualizer.util {
                         return;
                     }
                 }
+
+                MessageBox.Show(logFile + ": some log filters were not found.");
             }
         }
     }
