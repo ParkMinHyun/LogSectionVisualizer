@@ -163,10 +163,10 @@ namespace LogVisualizer {
             var logSectionIntervals = new List<double>();
 
             logText += GetFileName(logFile) + "\n";
-            foreach (var data in analysisData.filters) {
-                var logSection = logDictionary[data.name];
+            foreach (var label in Labels) {
+                var logSection = logDictionary[label];
 
-                logText += "[ " + data.name + " - " + logSection.interval + "ms ]\n";
+                logText += "[ " + label + " - " + logSection.interval + "ms ]\n";
                 logText += logSection.startLog + "\n";
                 logText += logSection.endLog + "\n\n";
                 logSectionIntervals.Add(logSection.interval);
