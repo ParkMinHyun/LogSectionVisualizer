@@ -182,6 +182,8 @@ namespace LogVisualizer {
 
                 SeriesCollection.Add(new ColumnSeries {
                     Title = GetFileName(logFile),
+                    DataLabels = true,
+                    LabelPoint = point => point.Y + "ms",
                     Values = new ChartValues<double>(logSectionIntervals),
                     Fill = ChartColor.colorList[SeriesCollection.Count]
                 });
