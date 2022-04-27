@@ -66,6 +66,15 @@
                             </StackPanel>
                         </ContentControl>
                     </Button>
+                    
+                    <Button HorizontalAlignment="Left" Click="TakeScreenShot" Margin="10,0,0,0" BorderThickness="0"  Height="25" Width="Auto" Background="Transparent" VerticalAlignment="Top">
+                        <ContentControl>
+                            <StackPanel Name="ScreenShotPanel" Visibility="Collapsed" Orientation="Horizontal"  Width="Auto" HorizontalAlignment="Left">
+                                <Image Source="../icon/screenshot.png" Height="20" Stretch="Uniform" />
+                                <TextBlock Text="Take Screenshot" Margin="4,2.5,0,0"  VerticalAlignment="Center" Height="20" Width="Auto" FontWeight="Bold" Foreground="#FF484848" />
+                            </StackPanel>
+                        </ContentControl>
+                    </Button>
 
                     <Button HorizontalAlignment="Left" Click="ExtractLogSection" Margin="10,0,0,0" BorderThickness="0"  Height="25" Width="Auto" Background="Transparent" VerticalAlignment="Top">
                         <ContentControl>

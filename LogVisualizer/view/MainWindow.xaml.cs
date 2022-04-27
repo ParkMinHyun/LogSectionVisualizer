@@ -14,6 +14,8 @@ using System.Windows.Media.Effects;
 using LogVisualizer.util;
 using System.Linq;
 using System.Windows.Media.Imaging;
+using System.Windows.Media;
+using System.IO;
 
 namespace LogVisualizer {
 
@@ -125,12 +127,50 @@ namespace LogVisualizer {
             worker.RunWorkerAsync(analysislogFiles);
         }
 
+        private void TakeScreenShot(object sender, RoutedEventArgs e) {
+            UIElement source = BusyIndicator.Content as UIElement;
+            var dirPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            Uri path = new Uri(dirPath + @"\screenShot.png");
+
+            try {
+                double Height, renderHeight, Width, renderWidth;
+
+                Height = renderHeight = source.RenderSize.Height;
+                Width = renderWidth = source.RenderSize.Width;
+
+                //Specification for target bitmap like width/height pixel etc.
+                RenderTargetBitmap renderTarget = new RenderTargetBitmap((int)renderWidth, (int)renderHeight, 96, 96, PixelFormats.Pbgra32);
+                //creates Visual Brush of UIElement
+                VisualBrush visualBrush = new VisualBrush(source);
+
+                DrawingVisual drawingVisual = new DrawingVisual();
+                using (DrawingContext drawingContext = drawingVisual.RenderOpen()) {
+                    //draws image of element
+                    drawingContext.DrawRectangle(visualBrush, null, new Rect(new Point(0, 0), new Point(Width, Height)));
+                }
+                //renders image
+                renderTarget.Render(drawingVisual);
+
+                //PNG encoder for creating PNG file
+                PngBitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(renderTarget));
+                using (FileStream stream = new FileStream(path.LocalPath, FileMode.Create, FileAccess.Write)) {
+                    encoder.Save(stream);
+                }
+
+                MessageBox.Show("screenshot saved in " + path);
+            } catch (Exception exception) {
+                MessageBox.Show(exception.ToString());
+            }
+        }
+
         private void ClearLogFiles(object sender, RoutedEventArgs e) {
             logText = null;
             maxAxisYValue = 1000;
 
             InitGuideBox.Visibility = Visibility.Visible;
             ClearLogPanel.Visibility = Visibility.Collapsed;
+            ScreenShotPanel.Visibility = Visibility.Collapsed;
             ExtractLogPanel.Visibility = Visibility.Collapsed;
 
             analysislogFiles.Clear();
@@ -194,6 +234,7 @@ namespace LogVisualizer {
         private void DrawChart(string logFile, List<double> logSectionIntervals) {
             this.Dispatcher.Invoke(() => {
                 ClearLogPanel.Visibility = Visibility.Visible;
+                ScreenShotPanel.Visibility = Visibility.Visible;
                 ExtractLogPanel.Visibility = Visibility.Visible;
 
                 SeriesCollection.Add(new ColumnSeries {
