@@ -45,7 +45,7 @@ namespace LogVisualizer.util {
                 }
 
                 logDictionary.Clear();
-                MessageBox.Show(logFile + "\n: Some log filters were not found.");
+                callback.OnFailedLogAnalysis(logFile);
             }
         }
 
@@ -61,6 +61,8 @@ namespace LogVisualizer.util {
     interface ILogAnalizerCallback {
 
         void OnFilteredLogSection(string sectionName, int sectionCount, int interval);
+
+        void OnFailedLogAnalysis(string fileName);
 
         void OnCompletedLogAnalysis(string logFile, Dictionary<string, LogData> logDictionary);
     }

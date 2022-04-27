@@ -79,6 +79,10 @@ namespace LogVisualizer {
 
         void CompletedBackgroundWorker(object sender, RunWorkerCompletedEventArgs e) {
             BusyIndicator.IsBusy = false;
+
+            if (SeriesCollection.Count == 0) {
+                InitGuideBox.Visibility = Visibility.Visible;
+            }
         }
 
         private void DragDropLogFile(object sender, DragEventArgs e) {
@@ -180,6 +184,11 @@ namespace LogVisualizer {
             }
 
             DrawChart(logFile, logSectionIntervals);
+        }
+
+        public void OnFailedLogAnalysis(string fileName) {
+            analysislogFiles.Remove(fileName);
+            MessageBox.Show(fileName + "\n: Some log filters were not found.");
         }
 
         private void DrawChart(string logFile, List<double> logSectionIntervals) {
